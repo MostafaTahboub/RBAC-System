@@ -1,7 +1,7 @@
 import express from 'express';
 import { User } from '../DB/entities/user';
 import { Profile } from '../DB/entities/profile';
-
+import { login } from '../controllers/user';
 const router = express.Router();
 
 router.post('/newUser', async (req, res) => {
@@ -45,6 +45,19 @@ router.get('/:id', async (req, res) => {
     }
 
 });
+
+router.post('/login', (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+  
+    login(email, password)
+      .then(data => {
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(401).send(err);
+      })
+  });
 
 
 export default router;

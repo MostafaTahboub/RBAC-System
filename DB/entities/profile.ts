@@ -2,6 +2,7 @@ import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, Pri
 import { User } from './user';
 
 @Entity()
+
 export class Profile extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;

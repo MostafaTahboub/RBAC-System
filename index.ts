@@ -18,7 +18,7 @@ app.use('/permission', permissionRouter);
 app.get('/app', (req, res) => {
     res.send("server is up ");
 });
-
+    
 app.listen(PORT, () => {
     console.log(`app listen to port : ${PORT}`);
     DB.initialize();

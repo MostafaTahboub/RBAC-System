@@ -2,10 +2,11 @@ import express from 'express';
 import { Role } from '../DB/entities/role';
 import { Permission } from '../DB/entities/permission';
 import { User } from '../DB/entities/user';
+import { authinticate } from '../middlewares/authentication';
 
 const router = express.Router();
 
-router.post('/newRole', async (req, res) => {
+router.post('/newRole',authinticate ,async (req, res) => {
 
   const newRole = new Role();
 
