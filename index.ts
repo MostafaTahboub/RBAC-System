@@ -1,5 +1,5 @@
 import express from 'express';
-import DB from './DB/dataSource';
+import DB, { initDB } from './DB/dataSource';
 import userRouter from './routes/user.route';
 import permissionRouter from './routes/permission.router';
 import roleRouter from './routes/role.router';
@@ -21,6 +21,6 @@ app.get('/app', (req, res) => {
     
 app.listen(PORT, () => {
     console.log(`app listen to port : ${PORT}`);
-    DB.initialize();
+    initDB();
 });
 

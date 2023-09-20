@@ -1,34 +1,37 @@
 import express from 'express';
 import { User } from '../DB/entities/user';
 import { Profile } from '../DB/entities/profile';
-import { login } from '../controllers/user';
+import { insertUser, login } from '../controllers/user';
 const router = express.Router();
 
 router.post('/newUser', async (req, res) => {
 
-    const { name, email, password } = req.body;
-    const newUser = new User();
+    // const { name, email, password } = req.body;
+    // const newUser = new User();
     
-    newUser.name = name;
-    newUser.email = email;
-    newUser.password = password;
+    // newUser.name = name;
+    // newUser.email = email;
+    // newUser.password = password;
 
-    const userProfile = new Profile();
+    // const userProfile = new Profile();
     
-    userProfile.firstName = req.body.firstName;
-    userProfile.lastName = req.body.lastName;
+    // userProfile.firstName = req.body.firstName;
+    // userProfile.lastName = req.body.lastName;
 
-    await userProfile.save();
+    // await userProfile.save();
     
-    newUser.profile = userProfile;
+    // newUser.profile = userProfile;
     
-    await newUser.save()
-        .then(() => {
+    // await newUser.save()
+    
+    insertUser(req.body,req.body)
+    .then(() => {
             res.status(201).send("User created successfully ");
         })
         .catch(() => {
             res.status(500).send("something went wrong ");
         })
+
 });
 
 

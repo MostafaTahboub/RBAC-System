@@ -10,23 +10,24 @@ const authinticate = async (req: express.Request, res: express.Response, next: e
 
     try {
 
-        jwt.verify(token, process.env.SECRET_KEY || '');
+       tokenIsValid= jwt.verify(token, process.env.SECRET_KEY || '');
+
+        if (tokenIsValid) {
+            const decoded = jwt.decode(token, { json: true });
+            const user = await User.findOneBy({ email: decoded?.email });
+            res.locals.user = user;
+            next();
+        }
+        
+        else {
+            res.status(401).send("you are unauthorized ");
+        }
 
     } catch (error) {
 
         console.log("the token is invalid : " + error);
     }
 
-    if (tokenIsValid) {
-        const decoded = jwt.decode(token, { json: true });
-        const user = await User.findOneBy({ email: decoded?.email });
-        res.locals.user = user;
-        next();
-    }
-
-    else {
-        res.status(401).send("you are unauthorized ");
-    }
 }
 
 export {

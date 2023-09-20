@@ -16,9 +16,9 @@ const dataSource = new DataSource({
     database: process.env.DB_NAME,
     entities: [User, Profile, Role, Permission],
     // migrations: ['dist/migrations/*.js'],     
-    synchronize: false,
+    synchronize: true,
     logging: true
-});
+});    
 
 export const initDB = async () =>
     await dataSource.initialize().then(() => {

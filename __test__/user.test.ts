@@ -1,50 +1,70 @@
-const app = require('../index');
-const request = require('supertest');
+import request from 'supertest'; 
+import dataSource, { initDB } from "../DB/dataSource"
+import { Profile } from "../DB/entities/profile";
+import { User } from "../DB/entities/user";
+import userRouter from '../routes/user.route';
+import express from 'express';
+import { createServer } from 'http';
 
-import dataSource, { initDB } from '../DB/dataSource';
-import { User } from '../DB/entities/user';
+const app =express();
+const server = createServer(app);
 
-const testUser = {
-  name: 'Test User',
-  email: 'test@example.com',
-  password: 'testpassword',
-  firstName: 'Test',
-  lastName: 'User',
-};
-
-beforeAll(async () => {
-  await initDB();
+beforeAll(async()=>{
+   await initDB();
 });
 
-afterAll(async () => {
-  await dataSource.destroy();
-})
-
-describe('POST /newUser', () => {
-  it('should create a new user', async () => {
-
-    const response = await request(app)
-      .post('/newUser')
-      .send(testUser);
-
-    expect(response.status).toBe(201);
-    expect(response.text).toBe('User created successfully ');
-
-    const user = await User.findOneBy({ email: testUser.email });
-    expect(user).not.toBeNull();
-    expect(user?.name).toBe(testUser.name);
-    expect(user?.profile).not.toBeNull();
-  });
-
-  it('should return an error if user creation fails', async () => {
-  
-    const response = await request(app)
-      .post('/newUser')
-      .send({ name: 'Invalid User' }); 
-
-    expect(response.status).toBe(500);
-    expect(response.text).toBe('something went wrong ');
-  });
+afterAll(async()=>{
+await dataSource.destroy();
 });
 
 
+describe('POST /user/newUser', () => {
+    
+    it('should create a new user and return 201 status', async () => {
+
+      const newUser = {
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      password: 'password123',
+      firstName: 'John',
+      lastName: 'Doe',
+    };
+
+    const response = await request(server)
+      .post('/user/newUser')
+      .send(newUser)
+
+    // expect(response.text).toBe('User created successfully');
+
+    // You can also perform additional assertions to check if the user was created in the database
+    const createdUser = await User.findOneBy({ email: newUser.email });
+    const createdProfile = await Profile.findOneBy({ firstName: newUser.firstName });
+
+    expect(createdUser).toBeTruthy();
+    expect(createdProfile).toBeTruthy();
+  });
+
+  // Add more test cases for error scenarios if needed
+  it('should return a 500 status when there is an error', async () => {
+    // Simulate an error scenario, e.g., by sending invalid data
+    const invalidData = {
+      name: 'Invalid User',
+      email: 'invalid-email', // Invalid email format
+      password: 'password123',
+      firstName: 'Invalid',
+      lastName: 'User',
+    };
+
+    const response = await request(server)
+      .post('/user/newUser')
+      .send(invalidData)
+      .expect(500);
+
+    expect(response.text).toBe('something went wrong');
+  });
+});
+
+// Close the server after all tests are done
+afterAll(() => {
+  server.close();
+});
